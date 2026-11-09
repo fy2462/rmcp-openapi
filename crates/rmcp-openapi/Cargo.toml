@@ -16,7 +16,7 @@ path = "src/lib.rs"
 
 [dependencies]
 rmcp = { workspace = true, default-features = false }
-rmcp-actix-web = { workspace = true, default-features = false, features = ["transport-streamable-http"] }
+rmcp-actix-web = { workspace = true, default-features = false, features = ["transport-streamable-http"], optional = true }
 reqwest.workspace = true
 serde = { version = "1.0", features = ["derive"] }
 serde_json.workspace = true
@@ -53,10 +53,14 @@ axum = { version = "0.8", features = [] }
 mockito = "1.7.0"
 
 [features]
-default = []
+default = ["actix-web"]
+# Links actix through rmcp-actix-web. Library users that only generate tools and
+# call APIs through `HttpClient` can disable it to drop the actix dependency tree.
+actix-web = ["dep:rmcp-actix-web"]
 # Enable this if your MCP service will forward tokens to upstream APIs (non-compliant).
 # This violates MCP specifications but may be necessary for proxy architectures.
 # See SECURITY.md for important security implications.
 authorization-token-passthrough = [
+    "actix-web",
     "rmcp-actix-web/authorization-token-passthrough",
 ]

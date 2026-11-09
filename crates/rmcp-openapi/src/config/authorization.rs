@@ -1,5 +1,11 @@
-use rmcp_actix_web::transport::AuthorizationHeader;
+#[cfg(feature = "actix-web")]
+pub use rmcp_actix_web::transport::AuthorizationHeader;
 use std::str::FromStr;
+
+/// Stand-in for the actix transport's header type; nothing inserts it without that transport.
+#[cfg(not(feature = "actix-web"))]
+#[derive(Debug, Clone)]
+pub struct AuthorizationHeader(pub String);
 
 /// Authorization handling for MCP server operations
 ///

@@ -1,3 +1,4 @@
+use crate::config::authorization::AuthorizationHeader;
 use bon::Builder;
 use rmcp::{
     handler::server::ServerHandler,
@@ -8,7 +9,6 @@ use rmcp::{
     },
     service::{RequestContext, RoleServer},
 };
-use rmcp_actix_web::transport::AuthorizationHeader;
 use serde_json::Value;
 use std::sync::Arc;
 

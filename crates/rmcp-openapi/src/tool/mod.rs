@@ -63,7 +63,7 @@ impl Tool {
         observer.observe_request(&self.metadata.name, has_auth, self.metadata.requires_auth());
 
         // Extract authorization header if present
-        let auth_header: Option<&rmcp_actix_web::transport::AuthorizationHeader> =
+        let auth_header: Option<&crate::config::authorization::AuthorizationHeader> =
             match &authorization {
                 Authorization::None => None,
                 #[cfg(feature = "authorization-token-passthrough")]
@@ -183,7 +183,7 @@ impl Tool {
         authorization: Authorization,
     ) -> Result<crate::http_client::HttpResponse, crate::error::ToolCallError> {
         // Extract authorization header if present
-        let auth_header: Option<&rmcp_actix_web::transport::AuthorizationHeader> =
+        let auth_header: Option<&crate::config::authorization::AuthorizationHeader> =
             match &authorization {
                 Authorization::None => None,
                 #[cfg(feature = "authorization-token-passthrough")]
