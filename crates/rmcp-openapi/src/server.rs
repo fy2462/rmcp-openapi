@@ -8,13 +8,13 @@ use rmcp::{
     },
     service::{RequestContext, RoleServer},
 };
-use rmcp_actix_web::transport::AuthorizationHeader;
 use serde_json::Value;
 use std::sync::Arc;
 
 use reqwest::header::HeaderMap;
 use url::Url;
 
+use crate::config::authorization::AuthorizationHeader;
 use crate::error::Error;
 use crate::filter::ToolFilter;
 use crate::tool::{Tool, ToolCollection, ToolMetadata};

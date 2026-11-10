@@ -203,6 +203,17 @@ impl HttpClient {
         self
     }
 
+    /// Uses the supplied client unchanged; `with_insecure(true)` replaces it.
+    #[must_use]
+    pub fn with_client(client: Client) -> Self {
+        Self {
+            client,
+            base_url: None,
+            default_headers: HeaderMap::new(),
+            timeout_seconds: DEFAULT_TIMEOUT_SECONDS,
+        }
+    }
+
     /// Set the base URL for all requests
     ///
     /// # Errors

@@ -540,3 +540,46 @@ impl MockPetstoreServer {
             .create()
     }
 }
+
+#[actix_web::test]
+async fn test_with_client_preserves_user_agent_and_redirect_policy() -> anyhow::Result<()> {
+    let mut mock_server = mockito::Server::new_async().await;
+    let redirect = mock_server
+        .mock("GET", "/ping")
+        .match_header("user-agent", "caller-supplied/9.9")
+        .with_status(302)
+        .with_header("location", "/redirect-target")
+        .create_async()
+        .await;
+    let target = mock_server
+        .mock("GET", "/redirect-target")
+        .with_status(200)
+        .expect(0)
+        .create_async()
+        .await;
+
+    let supplied = reqwest::Client::builder()
+        .user_agent("caller-supplied/9.9")
+        .redirect(reqwest::redirect::Policy::none())
+        .build()?;
+    let client =
+        HttpClient::with_client(supplied).with_base_url(Url::parse(&mock_server.url())?)?;
+    let tool_metadata = rmcp_openapi::ToolMetadata {
+        name: "ping".to_string(),
+        title: None,
+        description: None,
+        parameters: json!({"type": "object", "properties": {}}),
+        output_schema: None,
+        method: "GET".to_string(),
+        path: "/ping".to_string(),
+        security: None,
+        parameter_mappings: std::collections::HashMap::new(),
+    };
+
+    let response = client.execute_tool_call(&tool_metadata, &json!({})).await?;
+
+    assert_eq!(response.status_code, 302);
+    redirect.assert_async().await;
+    target.assert_async().await;
+    Ok(())
+}
